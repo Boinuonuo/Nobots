@@ -51,23 +51,24 @@ async def redeem(ctx, key: str):
     # 无论在不在频道，都通过 GUILD_ID 找到你的服务器
     guild = bot.get_guild(GUILD_ID)
     if not guild:
-        return await ctx.send("❌ Bot configuration error: Guild not found.")
+        return await ctx.send("❌ Error: Server context missing.")
 
     # 在该服务器中找到这个发指令的人
     member = guild.get_member(ctx.author.id)
     if not member:
-        return await ctx.send("❌ You are not a member of the server!")
+        return await ctx.send("❌ Error: You are not in the server.")
 
     # 获取身分组（注意这里用 guild.get_role）
     role = guild.get_role(ROLE_ID)
     role2 = guild.get_role(ROLE_ID2)
+    role_text = role.name if role else "membership"
     # --- 新增：Master Key 逻辑 ---
     if key == MASTER_KEY:
         if role:
             # 准备发放列表
             to_add = [role]
             if role2: to_add.append(role2)
-            await ctx.author.add_roles(*to_add)
+            await member.add_roles(*to_add)
             # 1. 先删除消息
             if ctx.guild:
                 try:
@@ -77,7 +78,7 @@ async def redeem(ctx, key: str):
             # 2. 创建金色的 Embed 卡片
             em = discord.Embed(
                 title="👑 Key Accepted", 
-                description=f"Welcome, {ctx.author.mention}! \n\nThank you for being such an important part of my journey. \n\nYour support means the world to me! ✨ \n\nYou now have the **{role.name}** role. Enjoy!", 
+                description=f"Welcome, {ctx.author.mention}! \n\nThank you for being such an important part of my journey. \n\nYour support means the world to me! ✨ \n\nYou now have the **{role_text}** role. Enjoy!", 
                 color=0xffd700
             )
             em.set_footer(text="Special Access Granted")
@@ -105,7 +106,7 @@ async def redeem(ctx, key: str):
                     to_add.append(role2)
                 
                 # 2. 一次性发放身分组
-                await ctx.author.add_roles(*to_add)
+                await member.add_roles(*to_add)
 
                 # 3. 记录到已使用列表
                 with open("used_keys.txt", "a") as f:
@@ -116,7 +117,7 @@ async def redeem(ctx, key: str):
                         await ctx.message.delete()
                     except:
                         pass
-                em = discord.Embed(title="✅ Success", description=f"Key redeemed! \n\nA big thank-you for all the love and support!🌷 \n\nYou now have the **{role.name}** role. Enjoy!", color=0x00ff00)
+                em = discord.Embed(title="✅ Success", description=f"Key redeemed! \n\nA big thank-you for all the love and support!🌷 \n\nYou now have the **{role_text}** role. Enjoy!", color=0x00ff00)
                 em.set_footer(text="Special Access Granted")
                 await ctx.send(embed=em)
             else:
