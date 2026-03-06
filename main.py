@@ -70,10 +70,10 @@ async def redeem(ctx, key: str):
             await ctx.author.add_roles(*to_add)
             # 1. 先删除消息
             if ctx.guild:
-            try:
-                await ctx.message.delete()
-            except:
-                pass 
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass 
             # 2. 创建金色的 Embed 卡片
             em = discord.Embed(
                 title="👑 Key Accepted", 
@@ -112,10 +112,10 @@ async def redeem(ctx, key: str):
                     f.write(key + "\n")
                     
                 if ctx.guild:
-                try:
-                    await ctx.message.delete()
-                except:
-                    pass
+                    try:
+                        await ctx.message.delete()
+                    except:
+                        pass
                 em = discord.Embed(title="✅ Success", description=f"Key redeemed! \n\nA big thank-you for all the love and support!🌷 \n\nYou now have the **{role.name}** role. Enjoy!", color=0x00ff00)
                 em.set_footer(text="Special Access Granted")
                 await ctx.send(embed=em)
