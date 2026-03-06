@@ -10,7 +10,9 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 ROLE_ID = int(os.getenv('ROLE_ID')) if os.getenv('ROLE_ID') else None
 ROLE_ID2 = int(os.getenv('ROLE_ID2')) if os.getenv('ROLE_ID2') else None 
 ADMIN_ID = int(os.getenv('ADMIN_ID')) if os.getenv('ADMIN_ID') else None
+GUILD_ID = int(os.getenv('GUILD_ID')) if os.getenv('GUILD_ID') else None
 MASTER_KEY = os.getenv('MASTER_KEY')
+
 
 # 设置机器人指令前缀和意图
 intents = discord.Intents.all()
@@ -21,7 +23,7 @@ async def on_ready():
     await bot.tree.sync()
     print(f"✅ Bot is online as {bot.user.name}")
 
-# --- 生成 Key 的指令 ---
+# --- gen生成 Key 的指令 ---
 @bot.command()
 async def gen(ctx, amount: int):
     if ctx.author.id != ADMIN_ID: return
@@ -43,12 +45,22 @@ async def gen(ctx, amount: int):
     keys_str = "\n".join(keys)
     await ctx.send(f"🔑 **Generated {amount} Keys:**\n```\n{keys_str}\n```")
 
-# --- 兑换 Key 的指令 ---
+# --- rd兑换 Key 的指令 ---
 @bot.command(aliases=['rdm', 'rd'])
 async def redeem(ctx, key: str):
-    # 提前获取两个身分组对象
-    role = ctx.guild.get_role(ROLE_ID)
-    role2 = ctx.guild.get_role(ROLE_ID2)
+    # 无论在不在频道，都通过 GUILD_ID 找到你的服务器
+    guild = bot.get_guild(GUILD_ID)
+    if not guild:
+        return await ctx.send("❌ Bot configuration error: Guild not found.")
+
+    # 在该服务器中找到这个发指令的人
+    member = guild.get_member(ctx.author.id)
+    if not member:
+        return await ctx.send("❌ You are not a member of the server!")
+
+    # 获取身分组（注意这里用 guild.get_role）
+    role = guild.get_role(ROLE_ID)
+    role2 = guild.get_role(ROLE_ID2)
     # --- 新增：Master Key 逻辑 ---
     if key == MASTER_KEY:
         if role:
@@ -57,7 +69,11 @@ async def redeem(ctx, key: str):
             if role2: to_add.append(role2)
             await ctx.author.add_roles(*to_add)
             # 1. 先删除消息
-            await ctx.message.delete() 
+            if ctx.guild:
+            try:
+                await ctx.message.delete()
+            except:
+                pass 
             # 2. 创建金色的 Embed 卡片
             em = discord.Embed(
                 title="👑 Key Accepted", 
@@ -95,7 +111,11 @@ async def redeem(ctx, key: str):
                 with open("used_keys.txt", "a") as f:
                     f.write(key + "\n")
                     
-                await ctx.message.delete()
+                if ctx.guild:
+                try:
+                    await ctx.message.delete()
+                except:
+                    pass
                 em = discord.Embed(title="✅ Success", description=f"Key redeemed! \n\nA big thank-you for all the love and support!🌷 \n\nYou now have the **{role.name}** role. Enjoy!", color=0x00ff00)
                 em.set_footer(text="Special Access Granted")
                 await ctx.send(embed=em)
