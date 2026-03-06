@@ -82,10 +82,15 @@ async def redeem(ctx, key: str):
         if key in all_keys:
             # 找到对应的身分组
             if role:
-            to_add = [role]
-            if role2: to_add.append(role2)
-            await ctx.author.add_roles(*to_add)
-                # 记录到已使用列表
+                # 1. 准备发放列表
+                to_add = [role]
+                if role2: 
+                    to_add.append(role2)
+                
+                # 2. 一次性发放身分组
+                await ctx.author.add_roles(*to_add)
+
+                # 3. 记录到已使用列表
                 with open("used_keys.txt", "a") as f:
                     f.write(key + "\n")
                     
