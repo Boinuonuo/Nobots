@@ -30,9 +30,11 @@ async def gen(ctx, amount: int):
     # 确保文件存在，防止读取报错
     if not os.path.exists("keys.txt"): open("keys.txt", "w").close()
     
+    chars = string.ascii_uppercase + string.digits # 包含大写字母和数字
+    
     with open("keys.txt", "a") as f:
         for _ in range(amount):
-            key = str(uuid.uuid4())
+            key = ''.join(secrets.choice(chars) for _ in range(8))
             keys.append(key)
             f.write(key + "\n")
     
