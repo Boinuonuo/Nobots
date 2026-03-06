@@ -9,6 +9,8 @@ import string
 TOKEN = os.getenv('DISCORD_TOKEN')
 # 我们直接用 Role ID，比用名字更准确（不会因为改名失效）
 ROLE_ID = int(os.getenv('ROLE_ID')) if os.getenv('ROLE_ID') else None
+ADMIN_ID = int(os.getenv('ADMIN_ID')) if os.getenv('ADMIN_ID') else None
+MASTER_KEY = os.getenv('MASTER_KEY')
 
 # 设置机器人指令前缀和意图
 intents = discord.Intents.all()
@@ -22,7 +24,7 @@ async def on_ready():
 # --- 生成 Key 的指令 ---
 @bot.command()
 async def gen(ctx, amount: int):
-    if ctx.author.id != 1045011269222142032: return
+    if ctx.author.id != ADMIN_ID: return
     # 只有你能运行这个指令（简单判断，防止粉丝乱刷）
     # if str(ctx.author.id) != os.getenv('ADMIN_ID'): return
     
@@ -42,13 +44,18 @@ async def gen(ctx, amount: int):
     await ctx.send(f"🔑 **Generated {amount} Keys:**\n```\n{keys_str}\n```")
 
 # --- 兑换 Key 的指令 ---
-@bot.command()
+@bot.command(aliases=['rdm', 'rd'])
 async def redeem(ctx, key: str):
+    # 提前获取两个身分组对象
+    role = ctx.guild.get_role(ROLE_ID)
+    role2 = ctx.guild.get_role(ROLE_ID2)
     # --- 新增：Master Key 逻辑 ---
-    if key == 'K2026bnnybdgyq':
-        role = ctx.guild.get_role(ROLE_ID)
+    if key == MASTER_KEY:
         if role:
-            await ctx.author.add_roles(role)
+            # 准备发放列表
+            to_add = [role]
+            if role2: to_add.append(role2)
+            await ctx.author.add_roles(*to_add)
             # 1. 先删除消息
             await ctx.message.delete() 
             # 2. 创建金色的 Embed 卡片
@@ -74,9 +81,10 @@ async def redeem(ctx, key: str):
         
         if key in all_keys:
             # 找到对应的身分组
-            role = ctx.guild.get_role(ROLE_ID)
             if role:
-                await ctx.author.add_roles(role)
+            to_add = [role]
+            if role2: to_add.append(role2)
+            await ctx.author.add_roles(*to_add)
                 # 记录到已使用列表
                 with open("used_keys.txt", "a") as f:
                     f.write(key + "\n")
