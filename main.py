@@ -7,8 +7,8 @@ import string
 
 # 1. 从 Railway 的 Variables 读取配置
 TOKEN = os.getenv('DISCORD_TOKEN')
-# 我们直接用 Role ID，比用名字更准确（不会因为改名失效）
 ROLE_ID = int(os.getenv('ROLE_ID')) if os.getenv('ROLE_ID') else None
+ROLE_ID2 = int(os.getenv('ROLE_ID2')) if os.getenv('ROLE_ID2') else None 
 ADMIN_ID = int(os.getenv('ADMIN_ID')) if os.getenv('ADMIN_ID') else None
 MASTER_KEY = os.getenv('MASTER_KEY')
 
@@ -72,7 +72,8 @@ async def redeem(ctx, key: str):
     if os.path.exists("used_keys.txt"):
         with open("used_keys.txt", "r") as f:
             if key in f.read():
-                return await ctx.send(embed=discord.Embed(title="❌ Invalid", description="This key has already been used!", color=0xff0000))
+                em = discord.Embed(title="❌ Invalid", description="This key has already been used!", color=0xff0000)
+                return await ctx.send(embed=em)
 
     # 2. 检查是否存在于生成的 Key 列表中
     if os.path.exists("keys.txt"):
