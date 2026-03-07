@@ -202,37 +202,37 @@ async def admhelp(ctx):
     
     em = discord.Embed(
         title="👨‍✈️ Nono Bot v1.1 Control Manual", 
-        description="以下是当前版本的核心指令说明。请妥善保管机长权限。",
-        color=0x0000FF
+        description="以下是当前版本的核心指令说明。请妥善保管Admin权限。\n",
+        color=0xBA55D3
     )
     
     # --- 核心管理指令 (ADMIN ONLY) ---
     em.add_field(
         name="🔑 生成 Key", 
-        value="`.gen [数量]`\n生成 8 位短码并存入 keys.txt。\n*例：`.gen 10`*", 
+        value="`.gen [数量]`\n生成 8 位短码并存入 keys.txt。\n*例：`.gen 10`* \n", 
         inline=False
     )
     
     em.add_field(
         name="👑 手动授勋 (Server Only)", 
-        value="`.give @用户`\n无须 Key，直接点名赠送双重身分 + 金色卡片。\n*注意：必须在频道内使用，不可私聊。*", 
+        value="`.give @用户`\n无须 Key，直接点名赠送双重身分 + 金色卡片。\n*注意：必须在频道内使用，不可私聊。* \n", 
         inline=False
     )
     
     em.add_field(
         name="📢 高级公告 (Embed 版)", 
-        value="`.say #频道 标题 | 内容 | 颜色 | 页脚`\n使用 `|` 分隔各项，支持默认值。\n*例：`.say #news 嗨 | 欢迎加入 | 0xffd700 | Aeris`*", 
+        value="`.say #频道 标题 | 内容 | 颜色 | 页脚`\n使用 `|` 分隔各项，颜色默认蓝色，页脚默认Announcement。\n*例：`.say #news 竞猜活动 | 欢迎参加 | 0xffd700 | のの`* \n", 
         inline=False
     )
     
     # --- 公共/基础指令 ---
     em.add_field(
         name="🎫 成员兑换", 
-        value="`.rdm [Key]` (别名: .rd, .rdm)\n**全环境支持**：可在私聊或频道内使用。\n*例：`.rdm ABC12345`*", 
+        value="`.rdm [Key]` (别名: .rd, .rdm)\n**全环境支持**：可在私聊或频道内使用。\n*例：`.rdm ABC12345`* \n", 
         inline=False
     )
 
-    em.set_footer(text=f"Version v1.1 | 管理员: {ctx.author.name} | 安全级别: 极高")
+    em.set_footer(text=f"Version v1.1 | Admin: {ctx.author.name}")
     await ctx.send(embed=em)
 
 # 3. 运行机器人
