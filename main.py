@@ -201,38 +201,38 @@ async def admhelp(ctx):
     if ctx.author.id != ADMIN_ID: return
     
     em = discord.Embed(
-        title="👨‍✈️ Aeris Bot v1.0 Control Manual", 
+        title="👨‍✈️ Nono Bot v1.1 Control Manual", 
         description="以下是当前版本的核心指令说明。请妥善保管机长权限。",
-        color=0x2c3e50
+        color=0x0000FF
     )
     
-    # --- 管理员指令 (Admin Only) ---
+    # --- 核心管理指令 (ADMIN ONLY) ---
     em.add_field(
-        name="🔑 .gen [数量]", 
-        value="**[Admin Only]**\n生成指定数量的 8 位随机 Key。\n*用法提示：`.gen 5`*", 
+        name="🔑 生成 Key", 
+        value="`.gen [数量]`\n生成 8 位短码并存入 keys.txt。\n*例：`.gen 10`*", 
         inline=False
     )
     
     em.add_field(
-        name="👑 .give @用户", 
-        value="**[Admin Only / Server Only]**\n在频道内直接@某人发放身分，触发金色卡片。\n*注意：必须在服务器频道内执行。*", 
+        name="👑 手动授勋 (Server Only)", 
+        value="`.give @用户`\n无须 Key，直接点名赠送双重身分 + 金色卡片。\n*注意：必须在频道内使用，不可私聊。*", 
         inline=False
     )
     
     em.add_field(
-        name="📢 .say #频道 消息内容", 
-        value="**[Admin Only]**\n以机器人身份在指定频道发布公告。\n*用法提示：`.say #general 大家好！`*", 
+        name="📢 高级公告 (Embed 版)", 
+        value="`.say #频道 标题 | 内容 | 颜色 | 页脚`\n使用 `|` 分隔各项，支持默认值。\n*例：`.say #news 嗨 | 欢迎加入 | 0xffd700 | Aeris`*", 
         inline=False
     )
     
-    # --- 全员指令 (Public) ---
+    # --- 公共/基础指令 ---
     em.add_field(
-        name="🎫 .rdm [Key]", 
-        value="**[Anyone / Public & DM]**\n兑换身份。别名：`.rd`, `.rdm`。\n*用法提示：支持私聊或频道内输入。*", 
+        name="🎫 成员兑换", 
+        value="`.rdm [Key]` (别名: .rd, .rdm)\n**全环境支持**：可在私聊或频道内使用。\n*例：`.rdm ABC12345`*", 
         inline=False
     )
 
-    em.set_footer(text=f"Current Version: v1.0 | Admin: {ctx.author.name}")
+    em.set_footer(text=f"Version v1.1 | 管理员: {ctx.author.name} | 安全级别: 极高")
     await ctx.send(embed=em)
 
 # 3. 运行机器人
