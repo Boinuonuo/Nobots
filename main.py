@@ -78,10 +78,10 @@ async def redeem(ctx, key: str):
             # 2. 创建金色的 Embed 卡片
             em = discord.Embed(
                 title="👑 Key Accepted", 
-                description=f"Welcome, {ctx.author.mention}! \n\nThank you for being such an important part of my journey. \n\nYour support means the world to me! ✨ \n\nYou now have the **{role_text}** role. Enjoy!", 
+                description=f"Welcome, {ctx.author.mention}! \n\n Thank you for being such an important part of my journey. \n Your support means the world to me! ✨ \n You now have the **{role_text}** role. Enjoy!", 
                 color=0xffd700
             )
-            em.set_footer(text="Special Access Granted")
+            em.set_footer(text="Member Access Granted")
             # 3. 发送卡片并结束函数
             return await ctx.send(embed=em)
     # ---------------------------
@@ -117,8 +117,8 @@ async def redeem(ctx, key: str):
                         await ctx.message.delete()
                     except:
                         pass
-                em = discord.Embed(title="✅ Success", description=f"Key redeemed! \n\nA big thank-you for all the love and support!🌷 \n\nYou now have the **{role_text}** role. Enjoy!", color=0x00ff00)
-                em.set_footer(text="Special Access Granted")
+                em = discord.Embed(title="✅ Success", description=f"Key redeemed! \n\n A big thank-you {ctx.author.mention}! \n For all the love and support!🌷 \n You now have the **{role_text}** role. Enjoy!", color=0x00ff00)
+                em.set_footer(text="Member Access Granted")
                 await ctx.send(embed=em)
             else:
                 await ctx.send("❌ Error: Role ID not found. Check Railway Variables.")
@@ -126,6 +126,89 @@ async def redeem(ctx, key: str):
             await ctx.send("❌ Invalid Key: This key does not exist.")
     else:
         await ctx.send("❌ No keys have been generated yet.")
+
+# --- give授予 频道内手动授勋 ---
+@bot.command()
+async def give(ctx, member: discord.Member):
+    if ctx.author.id != ADMIN_ID: return
+
+    # 1. 获取身分组
+    role = ctx.guild.get_role(ROLE_ID)
+    role2 = ctx.guild.get_role(ROLE_ID2)
+    role_text = role.name if role else "membership"
+
+    if role:
+        # 2. 发放身份
+        to_add = [role]
+        if role2: to_add.append(role2)
+        await member.add_roles(*to_add)
+        # 3. 发送手动确认文字
+        await ctx.send(f"✅ Manual approval")
+
+        # 4. 发送出 Master Key 版卡片
+        em = discord.Embed(
+            title="👑 Access Granted", 
+            description=f"Welcome, {member.mention}! \n\n Thank you for being such an important part of my journey. \n Your support means the world to me! ✨ \n You now have the **{role_text}** role. Enjoy!", 
+            color=0xffd700
+        )
+        em.set_footer(text="Granted by Admin")
+        
+        await ctx.send(embed=em)
+    else:
+        await ctx.send("❌ Error: Primary Role ID not found.")
+
+# --- say指令 机器人代你去目标频道说 ---
+@bot.command()
+async def say(ctx, channel: discord.TextChannel, *, message: str):
+    # 1. 权限检查
+    if ctx.author.id != ADMIN_ID: return
+    
+    # 2. 让机器人去指定频道发消息
+    await channel.send(message)
+    
+    # 3. 在当前频道（#mod）给一个成功的反馈，方便你确认机器人确实发出去了
+    await ctx.send(f"✅ Message sent to {channel.mention}")
+
+# --- v1.0 机长手册 ---
+@bot.command()
+async def admhelp(ctx):
+    # 权限检查：非机长直接装死
+    if ctx.author.id != ADMIN_ID: return
+    
+    em = discord.Embed(
+        title="👨‍✈️ Aeris Bot v1.0 Control Manual", 
+        description="以下是当前版本的核心指令说明。请妥善保管机长权限。",
+        color=0x2c3e50
+    )
+    
+    # --- 管理员指令 (Admin Only) ---
+    em.add_field(
+        name="🔑 .gen [数量]", 
+        value="**[Admin Only]**\n生成指定数量的 8 位随机 Key。\n*用法提示：`.gen 5`*", 
+        inline=False
+    )
+    
+    em.add_field(
+        name="👑 .give @用户", 
+        value="**[Admin Only / Server Only]**\n在频道内直接@某人发放身分，触发金色卡片。\n*注意：必须在服务器频道内执行。*", 
+        inline=False
+    )
+    
+    em.add_field(
+        name="📢 .say #频道 消息内容", 
+        value="**[Admin Only]**\n以机器人身份在指定频道发布公告。\n*用法提示：`.say #general 大家好！`*", 
+        inline=False
+    )
+    
+    # --- 全员指令 (Public) ---
+    em.add_field(
+        name="🎫 .rdm [Key]", 
+        value="**[Anyone / Public & DM]**\n兑换身份。别名：`.rd`, `.rdm`。\n*用法提示：支持私聊或频道内输入。*", 
+        inline=False
+    )
+
+    em.set_footer(text=f"Current Version: v1.0 | Admin: {ctx.author.name}")
+    await ctx.send(embed=em)
 
 # 3. 运行机器人
 if TOKEN:
