@@ -158,16 +158,37 @@ async def give(ctx, member: discord.Member):
         await ctx.send("❌ Error: Primary Role ID not found.")
 
 # --- say指令 机器人代你去目标频道说 ---
+# 用法: .say #频道 标题 | 内容 | 颜色(可选)
 @bot.command()
-async def say(ctx, channel: discord.TextChannel, *, message: str):
-    # 1. 权限检查
+async def say(ctx, channel: discord.TextChannel, *, content: str):
     if ctx.author.id != ADMIN_ID: return
+
+    # 使用 "|" 分隔符拆分标题、内容和颜色
+    # 格式：标题 | 内容 | 颜色十六进制（如 0xffd700）
+    parts = content.split('|')
     
-    # 2. 让机器人去指定频道发消息
-    await channel.send(message)
+    title = parts[0].strip() if len(parts) > 0 else "Notification"
+    description = parts[1].strip() if len(parts) > 1 else ""
     
-    # 3. 在当前频道（#mod）给一个成功的反馈，方便你确认机器人确实发出去了
-    await ctx.send(f"✅ Message sent to {channel.mention}")
+    # 颜色处理：如果没写颜色，默认用蓝色
+    color_value = 0x3498db # 默认蓝色
+    if len(parts) > 2:
+        try:
+            color_value = int(parts[2].strip(), 16)
+        except:
+            pass
+
+    # 创建 Embed
+    em = discord.Embed(title=title, description=description, color=color_value)
+    
+    # 可选：你可以固定一个 Footer，增加官方感
+    em.set_footer(text="Official Announcement from Aeris")
+
+    # 发送
+    await channel.send(embed=em)
+    
+    # 在 #mod 频道确认
+    await ctx.send(f"✅ Embed message sent to {channel.mention}")
 
 # --- v1.0 机长手册 ---
 @bot.command()
