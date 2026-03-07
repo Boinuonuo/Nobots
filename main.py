@@ -163,28 +163,32 @@ async def give(ctx, member: discord.Member):
 async def say(ctx, channel: discord.TextChannel, *, content: str):
     if ctx.author.id != ADMIN_ID: return
 
-    # 使用 "|" 分隔符拆分标题、内容和颜色
-    # 格式：标题 | 内容 | 颜色十六进制（如 0xffd700）
+    # 使用 "|" 拆分。格式：标题 | 内容 | 颜色 | 页脚
     parts = content.split('|')
     
+    # 1. 标题 (默认: Notification)
     title = parts[0].strip() if len(parts) > 0 else "Notification"
+    
+    # 2. 内容
     description = parts[1].strip() if len(parts) > 1 else ""
     
-    # 颜色处理：如果没写颜色，默认用蓝色
-    color_value = 0x3498db # 默认蓝色
+    # 3. 颜色 (默认: 蓝色 0x3498db)
+    color_val = 0x3498db
     if len(parts) > 2:
         try:
-            color_value = int(parts[2].strip(), 16)
+            # 去掉可能存在的 # 号，并转为 16 进制整数
+            hex_color = parts[2].strip().replace('#', '0x')
+            color_val = int(hex_color, 16)
         except:
             pass
 
-    # 创建 Embed
-    em = discord.Embed(title=title, description=description, color=color_value)
-    
-    # 可选：你可以固定一个 Footer，增加官方感
-    em.set_footer(text="Official Announcement from Aeris")
+    # 4. 页脚 (默认: Announcement)
+    footer_text = parts[3].strip() if len(parts) > 3 else "Announcement"
 
-    # 发送
+    # 构建并发送 Embed
+    em = discord.Embed(title=title, description=description, color=color_val)
+    em.set_footer(text=footer_text)
+
     await channel.send(embed=em)
     
     # 在 #mod 频道确认
