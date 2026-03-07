@@ -194,41 +194,41 @@ async def say(ctx, channel: discord.TextChannel, *, content: str):
     # 在 #mod 频道确认
     await ctx.send(f"✅ Embed message sent to {channel.mention}")
 
-# --- v1.0 机长手册 ---
+# --- v1.1 机长手册 ---
 @bot.command()
 async def admhelp(ctx):
     # 权限检查：非机长直接装死
     if ctx.author.id != ADMIN_ID: return
     
     em = discord.Embed(
-        title="👨‍✈️ Nono Bot v1.1 Control Manual", 
-        description="以下是当前版本的核心指令说明。请妥善保管Admin权限。\n",
+        title="🍵NoNo bot😎 v1.1 Control Manual", 
+        description="以下是当前版本的核心指令说明。请妥善保管Admin权限。\n\u200b",
         color=0xBA55D3
     )
     
     # --- 核心管理指令 (ADMIN ONLY) ---
     em.add_field(
         name="🔑 生成 Key", 
-        value="`.gen [数量]`\n生成 8 位短码并存入 keys.txt。\n*例：`.gen 10`* \n", 
+        value="`.gen [数量]`\n生成指定数量的 8 位随机 Key。\n*例：`.gen 10`* \n\u200b", 
         inline=False
     )
     
     em.add_field(
         name="👑 手动授勋 (Server Only)", 
-        value="`.give @用户`\n无须 Key，直接点名赠送双重身分 + 金色卡片。\n*注意：必须在频道内使用，不可私聊。* \n", 
+        value="`.give @用户`\n在频道内直接@某人发放身分，触发金色卡片。\n*注意：必须在频道内使用，不可私聊。* \n\u200b", 
         inline=False
     )
     
     em.add_field(
         name="📢 高级公告 (Embed 版)", 
-        value="`.say #频道 标题 | 内容 | 颜色 | 页脚`\n使用 `|` 分隔各项，颜色默认蓝色，页脚默认Announcement。\n*例：`.say #news 竞猜活动 | 欢迎参加 | 0xffd700 | のの`* \n", 
+        value="`.say #频道 标题 | 内容 | 颜色 | 页脚`\n使用 `|` 分隔各项，颜色默认蓝色，页脚默认Announcement。\n*例：`.say #news 竞猜活动 | 欢迎参加 | 0xffd700 | のの`* \n\u200b", 
         inline=False
     )
     
     # --- 公共/基础指令 ---
     em.add_field(
         name="🎫 成员兑换", 
-        value="`.rdm [Key]` (别名: .rd, .rdm)\n**全环境支持**：可在私聊或频道内使用。\n*例：`.rdm ABC12345`* \n", 
+        value="`.rdm [Key]` (别名: .rd, .rdm)\n 兑换身份。全环境支持：可在私聊或频道内使用。\n*例：`.rdm ABC12345`* \n\u200b", 
         inline=False
     )
 
