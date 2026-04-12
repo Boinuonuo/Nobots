@@ -4,6 +4,8 @@ import uuid
 import os
 import secrets
 import string
+from dotenv import load_dotenv
+load_dotenv()
 
 # 1. 从 Railway 的 Variables 读取配置
 TOKEN = os.getenv('DISCORD_TOKEN')
